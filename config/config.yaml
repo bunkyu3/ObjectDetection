@@ -4,13 +4,16 @@ hydra:
   sweep:
     dir: /dev/null #パラメータスイープ時もoutputsが出力されないようにする
 
-experiment_name: "Default"
+mlflow:
+  enable: True
+  experiment_name: Default
+  tracking_dir: results/mlruns # run_experiments.pyからの相対パスを書く
 
 dataset:
   subset_size_ratio: 0.05
   train_size_ratio: 0.7
 
-train:
+train_param:
   num_epochs: 2
   batch_size: 2
   learning_rate: 0.001
