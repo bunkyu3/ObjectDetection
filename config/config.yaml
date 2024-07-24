@@ -1,0 +1,18 @@
+hydra:
+  run:
+    dir: /dev/null #outputsが出力されないようにする
+  sweep:
+    dir: /dev/null #パラメータスイープ時もoutputsが出力されないようにする
+
+experiment_name: "Default"
+
+dataset:
+  subset_size_ratio: 0.05
+  train_size_ratio: 0.7
+
+train:
+  num_epochs: 2
+  batch_size: 2
+  learning_rate: 0.001
+  momentum: 0.9
+  weight_decay: 0.0005
