@@ -19,7 +19,7 @@ save_dir:
     val_image:  results/output/Val/Image
 
 dataset:
-  subset_size_ratio: 0.05
+  subset_size_ratio: 0.001
   train_size_ratio: 0.7
 
 train_param:
@@ -28,3 +28,6 @@ train_param:
   learning_rate: 0.001
   momentum: 0.9
   weight_decay: 0.0005
+
+test_param:
+  batch_size: 2

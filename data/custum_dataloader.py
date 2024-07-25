@@ -33,7 +33,7 @@ def create_train_val_dataloader(cfg):
     full_dataset = CustomVOCDetection(root='./data/raw', 
                                       year='2012', 
                                       image_set='train', 
-                                      download=True, 
+                                      download=False, 
                                       transform=transform)
     small_dataset = create_subset(full_dataset, cfg.dataset.subset_size_ratio)
     train_dataset, val_dataset = split_dataset(small_dataset, cfg.dataset.train_size_ratio)
@@ -46,3 +46,22 @@ def create_train_val_dataloader(cfg):
                             shuffle=False, 
                             collate_fn=collate_fn)
     return train_loader, val_loader
+
+
+def create_test_dataloader(cfg):
+    transform = transforms.Compose([
+        transforms.Resize((100, 100)),
+        transforms.ToTensor(),
+    ])
+    full_dataset = CustomVOCDetection(root='./data/raw', 
+                                      year='2012', 
+                                      image_set='val', 
+                                      download=False, 
+                                      transform=transform)
+    small_dataset = create_subset(full_dataset, cfg.dataset.subset_size_ratio)
+    test_dataset = small_dataset
+    test_loader = DataLoader(dataset=test_dataset, 
+                              batch_size=cfg.test_param.batch_size, 
+                              shuffle=False,
+                              collate_fn=collate_fn)
+    return test_loader
