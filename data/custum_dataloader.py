@@ -33,7 +33,7 @@ def create_train_val_dataloader(cfg):
     full_dataset = CustomVOCDetection(root='./data/raw', 
                                       year='2012', 
                                       image_set='train', 
-                                      download=False, 
+                                      download=True, 
                                       transform=transform)
     small_dataset = create_subset(full_dataset, cfg.dataset.subset_size_ratio)
     train_dataset, val_dataset = split_dataset(small_dataset, cfg.dataset.train_size_ratio)

@@ -22,7 +22,7 @@ def train(cfg):
     # データの取得
     train_loader, val_loader = create_train_val_dataloader(cfg)
     # モデル、デバイス、オプティマイザの設定
-    device = torch.device(cfg.train.device if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = set_fasterrcnn_model()
     model.to(device)
     params = [p for p in model.parameters() if p.requires_grad]
