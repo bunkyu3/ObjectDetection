@@ -1,6 +1,7 @@
 import os
 import hydra
 from omegaconf import OmegaConf
+from utils.log import *
 from utils.utils import *
 from data.custum_dataset import *
 from data.custum_dataloader import *
@@ -32,8 +33,11 @@ def train(cfg):
                                 weight_decay=cfg.train_param.weight_decay)
     # 学習ループ
     for epoch in range(cfg.train_param.num_epochs):
+        print(epoch)
         train_one_epoch(epoch, model, train_loader, device, optimizer)
         # evaluate(epoch, model, val_loader, criterion)
+    manager.run(BestModelLogger(cfg, model))
+
 
 
 if __name__ == '__main__':
@@ -45,6 +49,6 @@ if __name__ == '__main__':
     # config読み込み
     cfg = OmegaConf.load("./config/config.yaml")
     # Log制御インスタンス
-    # manager = LoggerManager(enable_mlflow=False)
+    manager = LoggerManager(enable_mlflow=False)
     # 学習
     train(cfg)
