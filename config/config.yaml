@@ -9,6 +9,15 @@ mlflow:
   experiment_name: Default
   tracking_dir: results/mlruns # run_experiments.pyからの相対パスを書く
 
+save_dir:
+  mlflow: # tracking_dirからの相対パスを書く
+    config: "" # ファイル名はlocalの名前が使用されるため記述不要 
+    best_model: "" # 同上
+  local: # run_experiments.pyからの相対パスを書く
+    config: results/output/config.yaml
+    best_model: results/output/best_model.pth
+    val_image:  results/output/Val/Image
+
 dataset:
   subset_size_ratio: 0.05
   train_size_ratio: 0.7
