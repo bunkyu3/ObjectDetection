@@ -1,22 +1,28 @@
 from omegaconf import OmegaConf
 import os
-import torch.optim as optim
 from utils.log import *
 from utils.utils import *
-from data.custum_dataset import *
 from data.custum_dataloader import *
 from model.fasterrcnn import *
+from voc_data_visualization import *
 
 
 def evaluate(model, dataloader, device):
     model.eval()
     results = []
     with torch.no_grad():
-        for images, targets in dataloader:
-            images, targets = batch_to_device(images, targets, device)            
-            outputs = model(images)
-            print(outputs)
-            results.append(outputs)
+        for image, target in dataloader:
+            image, target = batch_to_device(image, target, device)            
+            output = model(image)
+            print("***********")
+            print(target[0])
+            # print("-----------")
+            # print(target[0]["boxes"])
+            # print(target[0]["boxes"].shape)
+            # print(output)
+            save_image_with_bboxes(image[0], target[0])
+            # break
+            results.append(output)
     return results
 
 
@@ -25,8 +31,9 @@ def test(cfg):
     test_loader = create_test_dataloader(cfg)
     # ネットワークと学習設定
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    state_dict = torch.load(cfg.save_dir.local.best_model, map_location=device)
     model = set_fasterrcnn_model()
-    model.load_state_dict(torch.load(cfg.save_dir.local.best_model))
+    model.load_state_dict(state_dict)
     model.to(device)
     evaluate(model, test_loader, device)
 

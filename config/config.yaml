@@ -30,4 +30,4 @@ train_param:
   weight_decay: 0.0005
 
 test_param:
-  batch_size: 2
+  batch_size: 1
