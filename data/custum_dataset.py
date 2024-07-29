@@ -16,6 +16,9 @@ class CustomVOCDetection(VOCDetection):
 
     def __getitem__(self, index):
         org_img, org_target = super().__getitem__(index)
+        if self.transform == None:
+            return org_img, org_target
+        
         # imgに対する前処理
         new_img = self.transform(org_img)
         # targetに対する前処理
