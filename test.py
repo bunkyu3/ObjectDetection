@@ -4,23 +4,29 @@ from utils.log import *
 from utils.utils import *
 from data.custum_dataloader import *
 from model.fasterrcnn import *
-from voc_data_visualization import *
+from analysis.visualization import *
 
 
 def evaluate(model, dataloader, device):
     model.eval()
     results = []
     with torch.no_grad():
-        for image, target in dataloader:
-            image, target = batch_to_device(image, target, device)            
-            output = model(image)
-            print("***********")
-            print(target[0])
+        i = 0
+        for imgs, targets in dataloader:
+            imgs, targets = batch_to_device(imgs, targets, device)            
+            outputs = model(imgs)
+            for img, target, output in zip(imgs, targets, outputs):
+                img_with_bbox = draw_bboxes_on_tensor(img, target)
+                img_with_bbox.save(f"./data/raw/pngs/{i}.png")
+                print(output)
+                img_with_bbox = draw_bboxes_on_tensor(img, output)
+                i = i + 1
+            
+            # print(target[0])
             # print("-----------")
             # print(target[0]["boxes"])
             # print(target[0]["boxes"].shape)
             # print(output)
-            save_image_with_bboxes(image[0], target[0])
             # break
             results.append(output)
     return results

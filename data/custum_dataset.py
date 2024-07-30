@@ -32,7 +32,7 @@ class CustomVOCDetection(VOCDetection):
             new_xmax = int(int(org_bbox["xmax"]) * new_w / org_w)
             new_ymin = int(int(org_bbox["ymin"]) * new_h / org_h)
             new_ymax = int(int(org_bbox["ymax"]) * new_h / org_h)
-            new_bboxes.append([new_xmin, new_ymin, new_xmax, new_ymax])
+            new_bboxes.append([new_xmin, new_xmax, new_ymin, new_ymax])
         # 2. クラスのインデックス取得、リスト化
         labels = []
         for org_obj in org_target["annotation"]["object"]:
