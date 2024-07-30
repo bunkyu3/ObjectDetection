@@ -36,8 +36,8 @@ def draw_bboxes_on_tensor(t_img, target):
     for t_bbox in target["boxes"]:
         np_bbox = t_bbox.numpy()
         xmin = int(np_bbox[0])
-        xmax = int(np_bbox[1])
-        ymin = int(np_bbox[2])
+        ymin = int(np_bbox[1])
+        xmax = int(np_bbox[2])
         ymax = int(np_bbox[3])
         p_img = draw_bbox(p_img, xmin, xmax, ymin, ymax, "a")
 

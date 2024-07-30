@@ -20,6 +20,7 @@ def evaluate(model, dataloader, device):
                 img_with_bbox.save(f"./data/raw/pngs/{i}.png")
                 print(output)
                 img_with_bbox = draw_bboxes_on_tensor(img, output)
+                img_with_bbox.save(f"./data/raw/pngs/{i}_hat.png")
                 i = i + 1
             
             # print(target[0])
