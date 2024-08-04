@@ -34,3 +34,23 @@ def split_dataset(dataset, train_ratio):
     print("len(train_dataset): ", len(train_dataset))
     print("len(val_dataset): ", len(val_dataset))
     return train_dataset, val_dataset
+
+
+def collate_fn(batch):
+    images = []
+    targets = []
+    for item in batch:
+        images.append(item[0])
+        targets.append(item[1])
+    return images, targets
+
+
+def batch_to_device(images, targets, device):
+    processed_images = [image.to(device) for image in images]
+    processed_targets = []
+    for target in targets:
+        processed_target = {}
+        processed_target["boxes"] = target["boxes"].to(device)
+        processed_target["labels"] = target["labels"].to(device)
+        processed_targets.append(processed_target)    
+    return processed_images, processed_targets

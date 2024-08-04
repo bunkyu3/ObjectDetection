@@ -3,9 +3,8 @@ import hydra
 from omegaconf import OmegaConf
 from utils.log import *
 from utils.utils import *
-from data.custum_dataset import *
-from data.custum_dataloader import *
-from model.fasterrcnn import *
+from data.custum_dataset import CustomVOCDetection
+from model.fasterrcnn import set_fasterrcnn_model
 
 
 def train_one_epoch(epoch, model, dataloader, device, optimizer):
@@ -21,8 +20,15 @@ def train_one_epoch(epoch, model, dataloader, device, optimizer):
 
 def train(cfg):
     # データの取得
-    train_loader, val_loader = create_train_val_dataloader(cfg)
-    # モデル、デバイス、オプティマイザの設定
+    full_dataset = CustomVOCDetection(image_set="train")
+    small_dataset = create_subset(full_dataset, cfg.dataset.subset_size_ratio)
+    train_dataset, val_dataset = split_dataset(small_dataset, cfg.dataset.train_size_ratio)
+    batch_size = cfg.train_param.batch_size
+    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size,
+                              shuffle=True, collate_fn=collate_fn)
+    val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size,
+                            shuffle=False, collate_fn=collate_fn)
+    # 学習設定
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = set_fasterrcnn_model()
     model.to(device)

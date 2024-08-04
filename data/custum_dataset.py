@@ -10,9 +10,12 @@ VOC_CLASSES = [
 ]
 
 class CustomVOCDetection(VOCDetection):
-    def __init__(self, root, year, image_set, download, transform):
+    def __init__(self, root="./data/raw", year="2012", image_set=None, download=False):
         super().__init__(root=root, year=year, image_set=image_set, download=download)
-        self.transform = transform
+        self.transform = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
 
     def __getitem__(self, index):
         org_img, org_target = super().__getitem__(index)
