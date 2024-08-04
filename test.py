@@ -2,26 +2,31 @@ from omegaconf import OmegaConf
 import os
 from utils.log import *
 from utils.utils import *
-from data.custum_dataloader import *
 from model.fasterrcnn import *
 from analysis.visualization import *
 
 
-def evaluate(model, dataloader, device):
-    model.eval()
+def evaluate(model, dataloader, device, epoch=None):
+    # model.eval()
     results = []
     with torch.no_grad():
-        i = 0
         for imgs, targets in dataloader:
-            imgs, targets = batch_to_device(imgs, targets, device)            
-            outputs = model(imgs)
-            for img, target, output in zip(imgs, targets, outputs):
-                img_with_bbox = draw_bboxes_on_tensor(img, target)
-                img_with_bbox.save(f"./data/raw/pngs/{i}.png")
-                print(output)
-                img_with_bbox = draw_bboxes_on_tensor(img, output)
-                img_with_bbox.save(f"./data/raw/pngs/{i}_hat.png")
-                i = i + 1
+            imgs, targets = batch_to_device(imgs, targets, device)
+            model.train()          
+            loss_dict = model(imgs, targets)
+            print("*******")
+            print(loss_dict)
+            model.eval()
+            outputs = model(imgs, targets)
+            print("--------")
+            print(outputs)
+            # for img, target, output in zip(imgs, targets, outputs):
+            #     img_with_bbox = draw_bboxes_on_tensor(img, target)
+            #     img_with_bbox.save(f"./data/raw/pngs/{i}.png")
+            #     print(output)
+            #     img_with_bbox = draw_bboxes_on_tensor(img, output)
+            #     img_with_bbox.save(f"./data/raw/pngs/{i}_hat.png")
+            #     i = i + 1
             
             # print(target[0])
             # print("-----------")
@@ -29,20 +34,21 @@ def evaluate(model, dataloader, device):
             # print(target[0]["boxes"].shape)
             # print(output)
             # break
-            results.append(output)
-    return results
+    #         results.append(output)
+    # return results    
 
 
 def test(cfg):
     # データの取得
-    test_loader = create_test_dataloader(cfg)
-    # ネットワークと学習設定
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    state_dict = torch.load(cfg.save_dir.local.best_model, map_location=device)
-    model = set_fasterrcnn_model()
-    model.load_state_dict(state_dict)
-    model.to(device)
-    evaluate(model, test_loader, device)
+    # test_loader = create_test_dataloader(cfg)
+    # # ネットワークと学習設定
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # state_dict = torch.load(cfg.save_dir.local.best_model, map_location=device)
+    # model = set_fasterrcnn_model()
+    # model.load_state_dict(state_dict)
+    # model.to(device)
+    # evaluate(model, test_loader, device)
+    pass
 
 
 if __name__ == '__main__':

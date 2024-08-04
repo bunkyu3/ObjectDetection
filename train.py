@@ -5,6 +5,7 @@ from utils.log import *
 from utils.utils import *
 from data.custum_dataset import CustomVOCDetection
 from model.fasterrcnn import set_fasterrcnn_model
+from test import evaluate
 
 
 def train_one_epoch(epoch, model, dataloader, device, optimizer):
@@ -41,9 +42,8 @@ def train(cfg):
     for epoch in range(cfg.train_param.num_epochs):
         print(epoch)
         train_one_epoch(epoch, model, train_loader, device, optimizer)
-        # evaluate(epoch, model, val_loader, criterion)
+        evaluate(model, val_loader, device, epoch)
     manager.run(BestModelLogger(cfg, model))
-
 
 
 if __name__ == '__main__':
