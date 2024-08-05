@@ -3,21 +3,53 @@ import hydra
 from omegaconf import OmegaConf
 from utils.log import *
 from utils.utils import *
+from utils.metrics import calculate_metrics
 from data.custum_dataset import CustomVOCDetection
 from model.fasterrcnn import set_fasterrcnn_model
-from test import evaluate
 
+
+def evaluate(model, dataloader, device, epoch=None):
+    total_loss = 0
+    total_tp = 0
+    total_fp = 0
+    total_fn = 0
+    with torch.no_grad():
+        for images, targets in dataloader:
+            images, targets = batch_to_device(images, targets, device)
+            # ロスの算出
+            model.train()       
+            loss_dict = model(images, targets)
+            loss = sum(l for l in loss_dict.values())
+            total_loss += loss.item()
+            # 混合行列の算出
+            model.eval()
+            outputs = model(images, targets)
+            for output, target in zip(outputs, targets):
+                pred_boxes = output["boxes"]
+                pred_labels = output["labels"]
+                true_boxes = target["boxes"]
+                true_labels = target["labels"]
+                tp, fp, fn = calculate_metrics(pred_boxes, pred_labels, true_boxes, true_labels)
+                total_tp += tp
+                total_fp += fp
+                total_fn += fn
+    val_loss = total_loss / len(dataloader)
+    print("val_loss: ", val_loss)
+    print("tp, fp, fn: ", tp, fp, fn)
 
 def train_one_epoch(epoch, model, dataloader, device, optimizer):
+    total_loss = 0
     model.train()
     for images, targets in dataloader:
         images, targets = batch_to_device(images, targets, device)            
         loss_dict = model(images, targets)
-        losses = sum(loss for loss in loss_dict.values())
+        loss = sum(l for l in loss_dict.values())
+        total_loss += loss.item()
         optimizer.zero_grad()
-        losses.backward()
+        loss.backward()
         optimizer.step()
-
+    train_loss = total_loss / len(dataloader)
+    print("train_loss: ", train_loss)
 
 def train(cfg):
     # データの取得

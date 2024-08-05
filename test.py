@@ -6,36 +6,6 @@ from model.fasterrcnn import *
 from analysis.visualization import *
 
 
-def evaluate(model, dataloader, device, epoch=None):
-    # model.eval()
-    results = []
-    with torch.no_grad():
-        for imgs, targets in dataloader:
-            imgs, targets = batch_to_device(imgs, targets, device)
-            model.train()          
-            loss_dict = model(imgs, targets)
-            print("*******")
-            print(loss_dict)
-            model.eval()
-            outputs = model(imgs, targets)
-            print("--------")
-            print(outputs)
-            # for img, target, output in zip(imgs, targets, outputs):
-            #     img_with_bbox = draw_bboxes_on_tensor(img, target)
-            #     img_with_bbox.save(f"./data/raw/pngs/{i}.png")
-            #     print(output)
-            #     img_with_bbox = draw_bboxes_on_tensor(img, output)
-            #     img_with_bbox.save(f"./data/raw/pngs/{i}_hat.png")
-            #     i = i + 1
-            
-            # print(target[0])
-            # print("-----------")
-            # print(target[0]["boxes"])
-            # print(target[0]["boxes"].shape)
-            # print(output)
-            # break
-    #         results.append(output)
-    # return results    
 
 
 def test(cfg):
